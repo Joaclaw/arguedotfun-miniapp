@@ -15,9 +15,13 @@ export default async function Image({
   try {
     const info = await getDebateInfo(address as `0x${string}`);
     const { pctA, pctB } = getOdds(info.totalSideA, info.totalSideB);
-    const totalPool = Number(info.totalSideA + info.totalSideB + info.totalBounty) / 1e6;
-    const poolStr = totalPool >= 1 ? `$${Math.floor(totalPool).toLocaleString()}` : `$${totalPool.toFixed(2)}`;
-    const timeStr = getTimeRemaining(info.endDate);
+    const totalPool =
+      Number(info.totalSideA + info.totalSideB + info.totalBounty) / 1e6;
+    const poolStr =
+      totalPool >= 1
+        ? `$${Math.floor(totalPool).toLocaleString()}`
+        : `$${totalPool.toFixed(2)}`;
+    const timeStr = info.isResolved ? 'Resolved' : getTimeRemaining(info.endDate);
     const statement =
       info.statement.length > 90
         ? info.statement.slice(0, 87) + '...'
@@ -44,11 +48,17 @@ export default async function Image({
               marginBottom: '36px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ fontSize: '36px', fontWeight: 700, color: '#10b981' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              <span style={{ fontSize: '36px', fontWeight: 700, color: '#10b981' }}>
                 argue.fun
-              </div>
-              <div
+              </span>
+              <span
                 style={{
                   fontSize: '20px',
                   color: '#a1a1aa',
@@ -57,25 +67,25 @@ export default async function Image({
                   borderRadius: '20px',
                 }}
               >
-                {info.isResolved ? 'Resolved' : timeStr}
-              </div>
+                {timeStr}
+              </span>
             </div>
-            <div style={{ fontSize: '28px', color: '#a1a1aa' }}>
+            <span style={{ fontSize: '28px', color: '#a1a1aa' }}>
               {poolStr} USDC
-            </div>
+            </span>
           </div>
 
           {/* Question */}
           <div
             style={{
+              display: 'flex',
+              alignItems: 'center',
               fontSize: '52px',
               fontWeight: 700,
               color: '#ffffff',
               lineHeight: 1.25,
               marginBottom: '50px',
               flexGrow: 1,
-              display: 'flex',
-              alignItems: 'center',
             }}
           >
             {statement}
@@ -103,12 +113,12 @@ export default async function Image({
                 padding: '8px',
               }}
             >
-              <div style={{ fontSize: '22px', fontWeight: 600, color: '#fff' }}>
+              <span style={{ fontSize: '22px', fontWeight: 600, color: '#fff' }}>
                 {info.sideAName}
-              </div>
-              <div style={{ fontSize: '32px', fontWeight: 700, color: '#fff' }}>
+              </span>
+              <span style={{ fontSize: '32px', fontWeight: 700, color: '#fff' }}>
                 {pctA}%
-              </div>
+              </span>
             </div>
             <div
               style={{
@@ -121,12 +131,12 @@ export default async function Image({
                 padding: '8px',
               }}
             >
-              <div style={{ fontSize: '22px', fontWeight: 600, color: '#fff' }}>
+              <span style={{ fontSize: '22px', fontWeight: 600, color: '#fff' }}>
                 {info.sideBName}
-              </div>
-              <div style={{ fontSize: '32px', fontWeight: 700, color: '#fff' }}>
+              </span>
+              <span style={{ fontSize: '32px', fontWeight: 700, color: '#fff' }}>
                 {pctB}%
-              </div>
+              </span>
             </div>
           </div>
         </div>
@@ -146,9 +156,9 @@ export default async function Image({
             backgroundColor: '#0a0a0a',
           }}
         >
-          <div style={{ fontSize: '56px', fontWeight: 700, color: '#10b981' }}>
+          <span style={{ fontSize: '56px', fontWeight: 700, color: '#10b981' }}>
             argue.fun
-          </div>
+          </span>
         </div>
       ),
       { ...size },
