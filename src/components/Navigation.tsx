@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAccount } from 'wagmi';
 
 const NAV_ITEMS = [
   {
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
 
 export default function Navigation() {
   const pathname = usePathname();
+  const { isConnected } = useAccount();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-800 bg-[#0a0a0a]/95 backdrop-blur-sm">
@@ -45,6 +47,13 @@ export default function Navigation() {
             </Link>
           );
         })}
+        {/* Wallet status indicator */}
+        <div className="flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-0.5">
+          <div className={`h-2.5 w-2.5 rounded-full ${isConnected ? 'bg-emerald-400' : 'bg-zinc-600'}`} />
+          <span className={`text-[10px] font-medium ${isConnected ? 'text-emerald-400' : 'text-zinc-500'}`}>
+            {isConnected ? 'Connected' : 'Wallet'}
+          </span>
+        </div>
       </div>
     </nav>
   );
