@@ -1,0 +1,16 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "frame": {
+    "version": "1",
+    "name": "argue.fun",
+    "homeUrl": "https://argue.fun",
+    "iconUrl": "https://argue.fun/icon.png",
+    "splashImageUrl": "https://argue.fun/splash.png",
+    "splashBackgroundColor": "#0a0a0a",
+    "webhookUrl": "https://argue.fun/api/webhook"
+  }
+}
