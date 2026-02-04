@@ -28,14 +28,17 @@ export default function ApprovalFlow({ requiredAmount, children }: ApprovalFlowP
 
   return (
     <div className="space-y-3">
-      <div className="rounded-xl border border-amber-900/50 bg-amber-950/20 p-4 text-center">
-        <p className="mb-3 text-sm text-amber-300">
+      <div
+        className="glass-card p-4 text-center"
+        style={{ borderColor: 'oklch(0.8 0.15 85 / 0.3)' }}
+      >
+        <p className="mb-3 text-sm" style={{ color: 'var(--side-a)' }}>
           Approve USDC spending to place bets
         </p>
         <button
           onClick={() => approve(maxApproval)}
           disabled={isPending}
-          className="min-h-[44px] w-full rounded-xl bg-amber-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-amber-500 active:bg-amber-700 disabled:opacity-50"
+          className="btn-platinum min-h-[44px] w-full px-6 py-3 text-sm"
         >
           {isPending ? 'Approving…' : 'Approve USDC'}
         </button>

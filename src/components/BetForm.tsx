@@ -84,7 +84,7 @@ export default function BetForm({
 
   if (!address) {
     return (
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-center text-sm text-zinc-500">
+      <div className="glass-card p-4 text-center text-sm" style={{ color: 'var(--platinum-medium)' }}>
         Connect wallet to place a bet
       </div>
     );
@@ -92,10 +92,10 @@ export default function BetForm({
 
   return (
     <ApprovalFlow requiredAmount={parsedAmount}>
-      <div className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+      <div className="glass-card space-y-3 p-4 animate-fade-in">
         {/* Success message */}
         {showSuccess && (
-          <div className="rounded-lg border border-emerald-700/50 bg-emerald-950/30 px-3 py-2 text-center text-sm font-medium text-emerald-400">
+          <div className="glass-surface px-3 py-2 text-center text-sm font-medium" style={{ borderColor: 'oklch(0.7 0.15 142 / 0.4)', color: 'oklch(0.7 0.15 142)' }}>
             ✅ Bet placed!
           </div>
         )}
@@ -104,20 +104,20 @@ export default function BetForm({
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => setSide('A')}
-            className={`min-h-[44px] rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
               side === 'A'
-                ? 'border-emerald-500 bg-emerald-500/20 text-emerald-400'
-                : 'border-zinc-700 text-zinc-400 active:bg-zinc-800'
+                ? 'btn-side-a-active'
+                : 'glass-surface text-zinc-400 active:brightness-110'
             }`}
           >
             {sideAName}
           </button>
           <button
             onClick={() => setSide('B')}
-            className={`min-h-[44px] rounded-lg border px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`min-h-[44px] rounded-xl px-3 py-2.5 text-sm font-medium transition-all ${
               side === 'B'
-                ? 'border-violet-500 bg-violet-500/20 text-violet-400'
-                : 'border-zinc-700 text-zinc-400 active:bg-zinc-800'
+                ? 'btn-side-b-active'
+                : 'glass-surface text-zinc-400 active:brightness-110'
             }`}
           >
             {sideBName}
@@ -127,11 +127,12 @@ export default function BetForm({
         {/* Amount + balance */}
         <div>
           <div className="mb-1 flex items-center justify-between">
-            <label className="text-xs text-zinc-500">Amount (USDC)</label>
+            <label className="text-xs" style={{ color: 'var(--platinum-medium)' }}>Amount (USDC)</label>
             {formattedBalance !== null && (
               <button
                 onClick={handleMax}
-                className="text-[10px] font-semibold uppercase text-emerald-400"
+                className="text-[10px] font-semibold uppercase font-mono-nums"
+                style={{ color: 'var(--side-a)' }}
               >
                 {formattedBalance} USDC · MAX
               </button>
@@ -144,15 +145,15 @@ export default function BetForm({
             placeholder="Min 1 USDC"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+            className="input-glass w-full px-3 py-2.5 text-sm font-mono-nums"
           />
         </div>
 
         {/* Estimated payout (inline) */}
         {estimatedPayout !== null && estimatedPayout > 0n && (
           <div className="text-center text-sm">
-            <span className="text-zinc-400">Est. payout: </span>
-            <span className="font-semibold text-emerald-400">
+            <span style={{ color: 'var(--platinum-medium)' }}>Est. payout: </span>
+            <span className="font-semibold font-mono-nums" style={{ color: 'var(--side-a)' }}>
               ${formatUSDC(estimatedPayout)}
             </span>
           </div>
@@ -162,7 +163,8 @@ export default function BetForm({
         {!showArgument ? (
           <button
             onClick={() => setShowArgument(true)}
-            className="w-full text-center text-xs text-zinc-500 underline decoration-zinc-700 underline-offset-2"
+            className="w-full text-center text-xs underline underline-offset-2"
+            style={{ color: 'var(--platinum-medium)', textDecorationColor: 'var(--platinum-dark)' }}
           >
             + Add argument (optional)
           </button>
@@ -173,7 +175,7 @@ export default function BetForm({
               value={argument}
               onChange={(e) => setArgument(e.target.value)}
               rows={2}
-              className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+              className="input-glass w-full resize-none px-3 py-2 text-sm"
             />
           </div>
         )}
@@ -182,7 +184,7 @@ export default function BetForm({
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className="min-h-[44px] w-full rounded-xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 active:bg-emerald-700 disabled:opacity-40"
+          className="btn-platinum min-h-[44px] w-full px-6 py-3 text-sm"
         >
           {isPending ? (
             <span className="inline-flex items-center gap-2">

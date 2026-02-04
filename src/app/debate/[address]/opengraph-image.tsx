@@ -35,7 +35,7 @@ export default async function Image({
             flexDirection: 'column',
             width: '100%',
             height: '100%',
-            backgroundColor: '#0a0a0a',
+            backgroundColor: '#1B1A1A',
             padding: '60px',
           }}
         >
@@ -55,22 +55,26 @@ export default async function Image({
                 gap: '12px',
               }}
             >
-              <span style={{ fontSize: '36px', fontWeight: 700, color: '#10b981' }}>
-                argue.fun
+              <span style={{ fontSize: '36px', fontWeight: 700, color: '#D4A017' }}>
+                argue
+              </span>
+              <span style={{ fontSize: '36px', fontWeight: 700, color: '#8A8A8A' }}>
+                .fun
               </span>
               <span
                 style={{
                   fontSize: '20px',
                   color: '#a1a1aa',
-                  backgroundColor: '#27272a',
+                  backgroundColor: '#2A2929',
                   padding: '6px 16px',
                   borderRadius: '20px',
+                  border: '1px solid rgba(138,138,138,0.2)',
                 }}
               >
                 {timeStr}
               </span>
             </div>
-            <span style={{ fontSize: '28px', color: '#a1a1aa' }}>
+            <span style={{ fontSize: '28px', color: '#a1a1aa', fontFamily: 'monospace' }}>
               {poolStr} USDC
             </span>
           </div>
@@ -109,7 +113,7 @@ export default async function Image({
                 alignItems: 'center',
                 justifyContent: 'center',
                 flex: Math.max(pctA, 10),
-                backgroundColor: '#059669',
+                background: 'linear-gradient(135deg, #D4A017, #B8860B)',
                 padding: '8px',
               }}
             >
@@ -127,7 +131,7 @@ export default async function Image({
                 alignItems: 'center',
                 justifyContent: 'center',
                 flex: Math.max(pctB, 10),
-                backgroundColor: '#7c3aed',
+                background: 'linear-gradient(135deg, #7C3AED, #6025C0)',
                 padding: '8px',
               }}
             >
@@ -153,11 +157,14 @@ export default async function Image({
             justifyContent: 'center',
             width: '100%',
             height: '100%',
-            backgroundColor: '#0a0a0a',
+            backgroundColor: '#1B1A1A',
           }}
         >
-          <span style={{ fontSize: '56px', fontWeight: 700, color: '#10b981' }}>
-            argue.fun
+          <span style={{ fontSize: '56px', fontWeight: 700, color: '#D4A017' }}>
+            argue
+          </span>
+          <span style={{ fontSize: '56px', fontWeight: 700, color: '#8A8A8A' }}>
+            .fun
           </span>
         </div>
       ),

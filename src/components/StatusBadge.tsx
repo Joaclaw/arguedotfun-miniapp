@@ -5,19 +5,19 @@ import { DebateStatus } from '@/lib/types';
 const STATUS_CONFIG: Record<DebateStatus, { label: string; className: string }> = {
   [DebateStatus.ACTIVE]: {
     label: 'Active',
-    className: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+    className: 'badge-active',
   },
   [DebateStatus.RESOLVING]: {
     label: 'Resolving',
-    className: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+    className: 'badge-resolving',
   },
   [DebateStatus.RESOLVED]: {
     label: 'Resolved',
-    className: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    className: 'badge-resolved',
   },
   [DebateStatus.UNDETERMINED]: {
     label: 'Undetermined',
-    className: 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
+    className: 'badge-undetermined',
   },
 };
 

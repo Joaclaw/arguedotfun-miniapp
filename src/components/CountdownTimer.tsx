@@ -35,7 +35,11 @@ export default function CountdownTimer({ endDate }: { endDate: bigint }) {
   const isEnded = display === 'Ended';
 
   return (
-    <span className={`text-sm font-medium ${isEnded ? 'text-zinc-500' : 'text-zinc-300'}`}>
+    <span
+      className={`text-sm font-medium font-mono-nums ${
+        isEnded ? 'text-zinc-500' : 'text-zinc-300'
+      }`}
+    >
       {isEnded ? 'Ended' : `⏱ ${display}`}
     </span>
   );

@@ -23,7 +23,8 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <svg
-            className="h-8 w-8 animate-spin text-emerald-500"
+            className="h-8 w-8 animate-spin"
+            style={{ color: 'var(--platinum-light)' }}
             viewBox="0 0 24 24"
             fill="none"
           >
@@ -41,7 +42,7 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
             />
           </svg>
-          <span className="text-sm text-zinc-500">Loading debate…</span>
+          <span className="text-sm" style={{ color: 'var(--platinum-medium)' }}>Loading debate…</span>
         </div>
       </div>
     );
@@ -67,16 +68,17 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
   const winningSide = isSideAWinner ? sideAName : sideBName;
 
   return (
-    <div className="mx-auto max-w-md px-4 py-5">
+    <div className="mx-auto max-w-md px-4 py-5 animate-fade-in">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <a
           href="https://argue.fun"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-lg font-bold text-emerald-400"
+          className="text-lg font-bold"
+          style={{ color: 'var(--side-a)' }}
         >
-          argue<span className="text-zinc-400">.fun</span>
+          argue<span style={{ color: 'var(--platinum-medium)' }}>.fun</span>
         </a>
         {status !== undefined && <StatusBadge status={status} />}
       </div>
@@ -86,7 +88,7 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
         {statement}
       </h1>
       {description && (
-        <p className="mb-4 text-sm leading-relaxed text-zinc-400">
+        <p className="mb-4 text-sm leading-relaxed" style={{ color: 'var(--platinum-medium)' }}>
           {description.length > 150
             ? description.slice(0, 147) + '…'
             : description}
@@ -94,10 +96,10 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
       )}
 
       {/* Odds bar */}
-      <div className="mb-3 overflow-hidden rounded-xl">
+      <div className="mb-3 overflow-hidden rounded-xl glass-card" style={{ padding: 0, borderRadius: '12px' }}>
         <div className="flex h-12 gap-[2px]">
           <div
-            className="flex items-center justify-center bg-emerald-600 px-3 transition-all"
+            className="odds-side-a flex items-center justify-center px-3 transition-all"
             style={{ flex: Math.max(pctA, 8) }}
           >
             <span className="truncate text-xs font-semibold text-white">
@@ -105,7 +107,7 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
             </span>
           </div>
           <div
-            className="flex items-center justify-center bg-violet-600 px-3 transition-all"
+            className="odds-side-b flex items-center justify-center px-3 transition-all"
             style={{ flex: Math.max(pctB, 8) }}
           >
             <span className="truncate text-xs font-semibold text-white">
@@ -117,7 +119,7 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
 
       {/* Pool + countdown */}
       <div className="mb-5 flex items-center justify-between text-sm">
-        <span className="text-zinc-400">
+        <span className="font-mono-nums" style={{ color: 'var(--platinum-medium)' }}>
           💰 {formatUSDC(totalPool)} USDC pool
         </span>
         {!isResolved && <CountdownTimer endDate={endDate} />}
@@ -125,12 +127,12 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
 
       {/* Resolved: show winner */}
       {status === DebateStatus.RESOLVED && (
-        <div className="mb-4 rounded-xl border border-emerald-800/50 bg-emerald-950/20 p-4">
-          <div className="mb-1 text-center text-sm font-semibold text-emerald-400">
+        <div className="glass-card mb-4 p-4" style={{ borderColor: 'oklch(0.7 0.15 142 / 0.3)' }}>
+          <div className="mb-1 text-center text-sm font-semibold" style={{ color: 'oklch(0.7 0.15 142)' }}>
             🏆 Winner: {winningSide}
           </div>
           {winnerReasoning && (
-            <p className="text-center text-xs leading-relaxed text-zinc-400">
+            <p className="text-center text-xs leading-relaxed" style={{ color: 'var(--platinum-medium)' }}>
               {winnerReasoning.length > 200
                 ? winnerReasoning.slice(0, 197) + '…'
                 : winnerReasoning}
@@ -141,7 +143,7 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
 
       {/* Undetermined */}
       {status === DebateStatus.UNDETERMINED && (
-        <div className="mb-4 rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4 text-center text-sm text-zinc-400">
+        <div className="glass-card mb-4 p-4 text-center text-sm" style={{ color: 'var(--platinum-medium)' }}>
           Debate ended without a winner. Bets are refundable.
         </div>
       )}
@@ -161,7 +163,7 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
       )}
 
       {status === DebateStatus.RESOLVING && (
-        <div className="rounded-xl border border-amber-800/50 bg-amber-950/20 p-4 text-center text-sm text-amber-300">
+        <div className="glass-card p-4 text-center text-sm" style={{ borderColor: 'oklch(0.7 0.15 285 / 0.3)', color: 'oklch(0.7 0.15 285)' }}>
           ⏳ AI is judging arguments…
         </div>
       )}
@@ -172,7 +174,8 @@ export default function DebateEmbed({ address }: DebateEmbedProps) {
           href={`https://argue.fun/debate/${address}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-zinc-500 underline decoration-zinc-700 underline-offset-2 transition-colors hover:text-zinc-300"
+          className="text-xs underline underline-offset-2 transition-colors hover:text-zinc-300"
+          style={{ color: 'var(--platinum-medium)', textDecorationColor: 'var(--platinum-dark)' }}
         >
           View full debate on argue.fun →
         </a>

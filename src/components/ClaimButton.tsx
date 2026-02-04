@@ -40,7 +40,10 @@ export default function ClaimButton({ debateAddress }: ClaimButtonProps) {
   // Already claimed (from chain or just succeeded)
   if (claimed || showSuccess) {
     return (
-      <div className="rounded-xl border border-emerald-800/50 bg-emerald-950/20 p-4 text-center text-sm font-medium text-emerald-400">
+      <div
+        className="glass-card p-4 text-center text-sm font-medium"
+        style={{ borderColor: 'oklch(0.7 0.15 142 / 0.3)', color: 'oklch(0.7 0.15 142)' }}
+      >
         {showSuccess && !claimed ? '🎉 Claimed!' : '✅ Already claimed'}
       </div>
     );
@@ -53,11 +56,7 @@ export default function ClaimButton({ debateAddress }: ClaimButtonProps) {
       <button
         onClick={() => claim(debateAddress)}
         disabled={isPending}
-        className={`min-h-[44px] w-full rounded-xl px-6 py-3 text-sm font-semibold text-white transition-colors disabled:opacity-50 ${
-          isRefund
-            ? 'bg-zinc-600 hover:bg-zinc-500 active:bg-zinc-700'
-            : 'bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700'
-        }`}
+        className="btn-platinum min-h-[44px] w-full px-6 py-3 text-sm"
       >
         {isPending ? (
           <span className="inline-flex items-center gap-2">
