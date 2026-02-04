@@ -11,11 +11,10 @@ import { BASE_URL } from '@/lib/debate-server';
  */
 export async function GET() {
   const manifest = {
-    // TODO: Replace with real accountAssociation after Farcaster signup
     accountAssociation: {
-      header: '',
-      payload: '',
-      signature: '',
+      header: 'eyJmaWQiOjI2NTk2MzcsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgzNkU2RWNBMEQ1NDQzMEJlYzBiMDljMWEyRDExOTlENjMzM2JFZTc1In0',
+      payload: 'eyJkb21haW4iOiJhcmd1ZWRvdGZ1bi1taW5pYXBwLnZlcmNlbC5hcHAifQ',
+      signature: 'brYzevG5ZVqWi4yEQXvZM6sPG58y2EZInkMnGwN6QJUp4xaAdPTfehIcj2KSrhsT77xID8wqK_qFcbK9sH8HhBs',
     },
     miniapp: {
       version: '1',
