@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Providers } from '@/components/providers';
+import MiniKitInit from '@/components/MiniKitInit';
 import '@coinbase/onchainkit/styles.css';
 import './globals.css';
 
@@ -43,7 +44,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0a] text-white`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <MiniKitInit />
+          {children}
+        </Providers>
       </body>
     </html>
   );
