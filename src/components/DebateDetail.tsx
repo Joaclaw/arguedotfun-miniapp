@@ -6,7 +6,7 @@ import {
   useArgumentDataSideA,
   useArgumentDataSideB,
 } from '@/hooks/useDebate';
-import { formatUSDC, calcPercentage, formatTimestamp } from '@/lib/utils';
+import { formatUSDC, calcPercentage, formatTimestamp, calculatePayout } from '@/lib/utils';
 import { DebateStatus } from '@/lib/types';
 import StatusBadge from './StatusBadge';
 import CountdownTimer from './CountdownTimer';
@@ -17,7 +17,7 @@ interface DebateDetailProps {
 }
 
 export default function DebateDetail({ address }: DebateDetailProps) {
-  const { data: info, isLoading: infoLoading } = useDebateInfo(address);
+  const { data: info, isLoading: infoLoading, error: infoError, refetch: refetchInfo } = useDebateInfo(address);
   const { data: statusRaw } = useDebateStatus(address);
   const { data: argsA, isLoading: argsALoading } = useArgumentDataSideA(address);
   const { data: argsB, isLoading: argsBLoading } = useArgumentDataSideB(address);
@@ -29,6 +29,20 @@ export default function DebateDetail({ address }: DebateDetailProps) {
         <div className="h-4 w-full rounded bg-zinc-800" />
         <div className="h-4 w-2/3 rounded bg-zinc-800" />
         <div className="h-40 rounded-xl bg-zinc-800" />
+      </div>
+    );
+  }
+
+  if (infoError) {
+    return (
+      <div className="rounded-xl border border-red-900/50 bg-red-950/20 p-6 text-center">
+        <p className="mb-3 text-sm text-red-400">Failed to load debate details.</p>
+        <button
+          onClick={() => refetchInfo()}
+          className="rounded-lg border border-red-800 bg-red-950/50 px-4 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-red-900/50 active:bg-red-800/50"
+        >
+          Try Again
+        </button>
       </div>
     );
   }
@@ -61,6 +75,17 @@ export default function DebateDetail({ address }: DebateDetailProps) {
   const status = (statusRaw ?? DebateStatus.ACTIVE) as DebateStatus;
   const totalPool = totalSideA + totalSideB + totalBounty;
   const { pctA, pctB } = calcPercentage(totalSideA, totalSideB);
+
+  // Payout calculator: "If you bet 1 USDC on [side], you'd win X.XX USDC"
+  const oneUSDC = 1_000_000n; // 1 USDC in 6 decimals
+  const payoutA =
+    totalSideA + oneUSDC > 0n
+      ? calculatePayout(oneUSDC, totalSideA + oneUSDC, totalSideB, totalBounty)
+      : 0n;
+  const payoutB =
+    totalSideB + oneUSDC > 0n
+      ? calculatePayout(oneUSDC, totalSideB + oneUSDC, totalSideA, totalBounty)
+      : 0n;
 
   return (
     <div className="space-y-5">
@@ -119,6 +144,28 @@ export default function DebateDetail({ address }: DebateDetailProps) {
           />
         </div>
       </div>
+
+      {/* Payout calculator */}
+      {status === DebateStatus.ACTIVE && (totalSideA > 0n || totalSideB > 0n) && (
+        <div className="grid grid-cols-2 gap-2 rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
+          <div className="text-center">
+            <div className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+              1 USDC on {sideAName}
+            </div>
+            <div className="mt-0.5 text-sm font-bold text-emerald-400">
+              → ${formatUSDC(payoutA)}
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+              1 USDC on {sideBName}
+            </div>
+            <div className="mt-0.5 text-sm font-bold text-violet-400">
+              → ${formatUSDC(payoutB)}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Winner reasoning (if resolved) */}
       {isResolved && winnerReasoning && (

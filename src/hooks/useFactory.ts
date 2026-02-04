@@ -12,6 +12,7 @@ export function useActiveDebates() {
     address: FACTORY_ADDRESS,
     abi: FACTORY_ABI,
     functionName: 'getActiveDebates',
+    query: { refetchInterval: 30_000 },
   });
 }
 
@@ -21,6 +22,7 @@ export function useDebatesByStatus(status: DebateStatus) {
     abi: FACTORY_ABI,
     functionName: 'getDebatesByStatus',
     args: [status],
+    query: { refetchInterval: 30_000 },
   });
 }
 

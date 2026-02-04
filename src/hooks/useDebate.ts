@@ -10,7 +10,7 @@ export function useDebateInfo(address: `0x${string}` | undefined) {
     address,
     abi: DEBATE_ABI,
     functionName: 'getInfo',
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 15_000 },
   });
 }
 
@@ -19,7 +19,7 @@ export function useDebateStatus(address: `0x${string}` | undefined) {
     address,
     abi: DEBATE_ABI,
     functionName: 'status',
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 15_000 },
   });
 }
 
@@ -30,7 +30,7 @@ export function useArgumentDataSideA(address: `0x${string}` | undefined) {
     address,
     abi: DEBATE_ABI,
     functionName: 'getArgumentDataOnSideA',
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 30_000 },
   });
 }
 
@@ -39,7 +39,7 @@ export function useArgumentDataSideB(address: `0x${string}` | undefined) {
     address,
     abi: DEBATE_ABI,
     functionName: 'getArgumentDataOnSideB',
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 30_000 },
   });
 }
 
