@@ -24,6 +24,12 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_URL ??
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000'),
+  ),
   title: 'argue.fun — Debate Prediction Markets',
   description:
     'Bet USDC on debate outcomes. Write compelling arguments. AI picks the winner.',

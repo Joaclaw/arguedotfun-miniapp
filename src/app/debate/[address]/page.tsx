@@ -1,62 +1,70 @@
-'use client';
+import type { Metadata } from 'next';
+import { getDebateInfo, getDebateStatus, getOdds, formatPool, getTimeRemaining, BASE_URL } from '@/lib/debate-server';
+import DebateEmbed from './DebateEmbed';
 
-import { useParams, useRouter } from 'next/navigation';
-import { useDebateInfo, useDebateStatus } from '@/hooks/useDebate';
-import { DebateStatus } from '@/lib/types';
-import DebateDetail from '@/components/DebateDetail';
-import BetForm from '@/components/BetForm';
-import ClaimButton from '@/components/ClaimButton';
-import Navigation from '@/components/Navigation';
+interface PageProps {
+  params: Promise<{ address: string }>;
+}
 
-export default function DebatePage() {
-  const params = useParams();
-  const router = useRouter();
-  const address = params.address as `0x${string}`;
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { address } = await params;
+  const addr = address as `0x${string}`;
 
-  const { data: info } = useDebateInfo(address);
-  const { data: statusRaw } = useDebateStatus(address);
+  try {
+    const [info, status] = await Promise.all([
+      getDebateInfo(addr),
+      getDebateStatus(addr),
+    ]);
 
-  const status = statusRaw as DebateStatus | undefined;
+    const { pctA, pctB } = getOdds(info.totalSideA, info.totalSideB);
+    const pool = formatPool(info.totalSideA, info.totalSideB, info.totalBounty);
+    const timeStr = getTimeRemaining(info.endDate);
+    const statusLabel = ['Active', 'Resolving', 'Resolved', 'Undetermined'][status] ?? 'Active';
 
-  // Extract side names from info tuple for BetForm
-  const sideAName = info ? (info as readonly unknown[])[3] as string : 'Side A';
-  const sideBName = info ? (info as readonly unknown[])[4] as string : 'Side B';
+    const title = `${info.statement} | argue.fun`;
+    const desc = `${info.sideAName} (${pctA}%) vs ${info.sideBName} (${pctB}%) — $${pool} USDC pool — ${statusLabel}`;
+    const imageUrl = `${BASE_URL}/debate/${address}/opengraph-image`;
+    const pageUrl = `${BASE_URL}/debate/${address}`;
 
-  return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      <div className="mx-auto max-w-lg px-4 pb-24 pt-4">
-        {/* Back button */}
-        <button
-          onClick={() => router.back()}
-          className="mb-4 flex min-h-[44px] items-center gap-1 text-sm text-zinc-400 active:text-white"
-        >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-          </svg>
-          Back
-        </button>
+    // Farcaster Mini App embed JSON
+    const embedJson = JSON.stringify({
+      version: '1',
+      imageUrl,
+      button: {
+        title: status === 0 ? '💰 Bet Now' : '👀 View',
+        action: {
+          type: 'launch_frame',
+          name: 'argue.fun',
+          url: pageUrl,
+          splashImageUrl: `${BASE_URL}/icon.png`,
+          splashBackgroundColor: '#0a0a0a',
+        },
+      },
+    });
 
-        <DebateDetail address={address} />
+    return {
+      title,
+      description: desc,
+      openGraph: {
+        title,
+        description: desc,
+        images: [{ url: imageUrl, width: 1200, height: 800 }],
+      },
+      other: {
+        'fc:miniapp': embedJson,
+        'fc:frame': embedJson,
+      },
+    };
+  } catch {
+    return {
+      title: 'argue.fun — Debate Markets',
+      description: 'Bet USDC on debate outcomes on Base',
+    };
+  }
+}
 
-        {/* Bet form (only for active debates) */}
-        {status === DebateStatus.ACTIVE && (
-          <div className="mt-5">
-            <BetForm
-              debateAddress={address}
-              sideAName={sideAName}
-              sideBName={sideBName}
-            />
-          </div>
-        )}
+export default async function DebatePage({ params }: PageProps) {
+  const { address } = await params;
 
-        {/* Claim button (for resolved/undetermined) */}
-        {(status === DebateStatus.RESOLVED || status === DebateStatus.UNDETERMINED) && (
-          <div className="mt-5">
-            <ClaimButton debateAddress={address} />
-          </div>
-        )}
-      </div>
-      <Navigation />
-    </div>
-  );
+  return <DebateEmbed address={address as `0x${string}`} />;
 }

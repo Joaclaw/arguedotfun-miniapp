@@ -5,7 +5,6 @@ import { useAccount } from 'wagmi';
 import { usePlaceBet, useUSDCBalance } from '@/hooks/useTransactions';
 import { useDebateInfo } from '@/hooks/useDebate';
 import { parseUSDC, formatUSDC, calculatePayout } from '@/lib/utils';
-import { byteLengthOf } from '@/lib/utils';
 import ApprovalFlow from './ApprovalFlow';
 
 interface BetFormProps {
@@ -14,9 +13,11 @@ interface BetFormProps {
   sideBName: string;
 }
 
-const MAX_ARGUMENT_BYTES = 1000;
-
-export default function BetForm({ debateAddress, sideAName, sideBName }: BetFormProps) {
+export default function BetForm({
+  debateAddress,
+  sideAName,
+  sideBName,
+}: BetFormProps) {
   const { address } = useAccount();
   const { placeBet, isPending, isSuccess, error, reset } = usePlaceBet();
   const { data: balanceRaw } = useUSDCBalance();
@@ -24,28 +25,23 @@ export default function BetForm({ debateAddress, sideAName, sideBName }: BetForm
 
   const [side, setSide] = useState<'A' | 'B' | null>(null);
   const [amount, setAmount] = useState('');
-  const [argument, setArgument] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showArgument, setShowArgument] = useState(false);
+  const [argument, setArgument] = useState('');
 
-  const byteCount = byteLengthOf(argument);
   const parsedAmount =
     amount && !isNaN(Number(amount)) && Number(amount) >= 1
       ? parseUSDC(amount)
       : 0n;
 
   const canSubmit =
-    !!address &&
-    side !== null &&
-    parsedAmount > 0n &&
-    byteCount <= MAX_ARGUMENT_BYTES &&
-    !isPending;
+    !!address && side !== null && parsedAmount > 0n && !isPending;
 
-  // Extract pool data for estimated payout
+  // Pool data for estimated payout
   const totalSideA = info ? ((info as readonly unknown[])[9] as bigint) : 0n;
   const totalSideB = info ? ((info as readonly unknown[])[10] as bigint) : 0n;
   const totalBounty = info ? ((info as readonly unknown[])[14] as bigint) : 0n;
 
-  // Calculate estimated payout
   const estimatedPayout =
     side && parsedAmount > 0n
       ? calculatePayout(
@@ -56,13 +52,13 @@ export default function BetForm({ debateAddress, sideAName, sideBName }: BetForm
         )
       : null;
 
-  // Show success message briefly after tx
   useEffect(() => {
     if (isSuccess) {
       setShowSuccess(true);
       setAmount('');
       setArgument('');
       setSide(null);
+      setShowArgument(false);
       const timer = setTimeout(() => {
         setShowSuccess(false);
         reset();
@@ -76,16 +72,13 @@ export default function BetForm({ debateAddress, sideAName, sideBName }: BetForm
     placeBet(debateAddress, side === 'A', parsedAmount, argument);
   };
 
-  // USDC balance formatted
   const formattedBalance =
     balanceRaw !== undefined ? formatUSDC(balanceRaw as bigint) : null;
 
   const handleMax = () => {
     if (balanceRaw !== undefined) {
       const raw = balanceRaw as bigint;
-      // Format without commas for the input
-      const formatted = (Number(raw) / 1e6).toFixed(2);
-      setAmount(formatted);
+      setAmount((Number(raw) / 1e6).toFixed(2));
     }
   };
 
@@ -99,9 +92,7 @@ export default function BetForm({ debateAddress, sideAName, sideBName }: BetForm
 
   return (
     <ApprovalFlow requiredAmount={parsedAmount}>
-      <div className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-        <h3 className="text-sm font-semibold text-white">Place Your Bet</h3>
-
+      <div className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
         {/* Success message */}
         {showSuccess && (
           <div className="rounded-lg border border-emerald-700/50 bg-emerald-950/30 px-3 py-2 text-center text-sm font-medium text-emerald-400">
@@ -133,22 +124,19 @@ export default function BetForm({ debateAddress, sideAName, sideBName }: BetForm
           </button>
         </div>
 
-        {/* USDC Balance */}
-        {formattedBalance !== null && (
-          <div className="flex items-center justify-between text-xs text-zinc-400">
-            <span>Balance: {formattedBalance} USDC</span>
-            <button
-              onClick={handleMax}
-              className="rounded bg-zinc-800 px-2 py-0.5 text-[10px] font-semibold uppercase text-emerald-400 transition-colors hover:bg-zinc-700 active:bg-zinc-600"
-            >
-              MAX
-            </button>
-          </div>
-        )}
-
-        {/* Amount input */}
+        {/* Amount + balance */}
         <div>
-          <label className="mb-1 block text-xs text-zinc-500">Amount (USDC)</label>
+          <div className="mb-1 flex items-center justify-between">
+            <label className="text-xs text-zinc-500">Amount (USDC)</label>
+            {formattedBalance !== null && (
+              <button
+                onClick={handleMax}
+                className="text-[10px] font-semibold uppercase text-emerald-400"
+              >
+                {formattedBalance} USDC · MAX
+              </button>
+            )}
+          </div>
           <input
             type="number"
             min="1"
@@ -160,36 +148,35 @@ export default function BetForm({ debateAddress, sideAName, sideBName }: BetForm
           />
         </div>
 
-        {/* Estimated payout */}
+        {/* Estimated payout (inline) */}
         {estimatedPayout !== null && estimatedPayout > 0n && (
-          <div className="rounded-lg border border-zinc-700/50 bg-zinc-800/50 px-3 py-2 text-center text-sm">
+          <div className="text-center text-sm">
             <span className="text-zinc-400">Est. payout: </span>
             <span className="font-semibold text-emerald-400">
-              ${formatUSDC(estimatedPayout)} USDC
+              ${formatUSDC(estimatedPayout)}
             </span>
           </div>
         )}
 
-        {/* Argument textarea */}
-        <div>
-          <div className="mb-1 flex items-center justify-between">
-            <label className="text-xs text-zinc-500">Argument (optional)</label>
-            <span
-              className={`text-xs ${
-                byteCount > MAX_ARGUMENT_BYTES ? 'text-red-400' : 'text-zinc-500'
-              }`}
-            >
-              {byteCount}/{MAX_ARGUMENT_BYTES} bytes
-            </span>
+        {/* Optional argument toggle */}
+        {!showArgument ? (
+          <button
+            onClick={() => setShowArgument(true)}
+            className="w-full text-center text-xs text-zinc-500 underline decoration-zinc-700 underline-offset-2"
+          >
+            + Add argument (optional)
+          </button>
+        ) : (
+          <div>
+            <textarea
+              placeholder="Why does this side win?"
+              value={argument}
+              onChange={(e) => setArgument(e.target.value)}
+              rows={2}
+              className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
+            />
           </div>
-          <textarea
-            placeholder="Why do you think this side wins?"
-            value={argument}
-            onChange={(e) => setArgument(e.target.value)}
-            rows={3}
-            className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-emerald-500 focus:outline-none"
-          />
-        </div>
+        )}
 
         {/* Submit */}
         <button
@@ -199,9 +186,24 @@ export default function BetForm({ debateAddress, sideAName, sideBName }: BetForm
         >
           {isPending ? (
             <span className="inline-flex items-center gap-2">
-              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <svg
+                className="h-4 w-4 animate-spin"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                />
               </svg>
               Confirming…
             </span>
