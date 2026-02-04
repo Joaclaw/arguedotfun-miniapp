@@ -63,7 +63,7 @@ export function useApproveUSDC() {
 // ── Place Bet ──
 
 export function usePlaceBet() {
-  const { writeContract, writeContractAsync, data, isPending, error, reset } =
+  const { writeContract, writeContractAsync, data, isPending, isSuccess, error, reset } =
     useWriteContract();
 
   const placeBet = (
@@ -94,13 +94,13 @@ export function usePlaceBet() {
     });
   };
 
-  return { placeBet, placeBetAsync, data, isPending, error, reset };
+  return { placeBet, placeBetAsync, data, isPending, isSuccess, error, reset };
 }
 
 // ── Claim ──
 
 export function useClaim() {
-  const { writeContract, writeContractAsync, data, isPending, error, reset } =
+  const { writeContract, writeContractAsync, data, isPending, isSuccess, error, reset } =
     useWriteContract();
 
   const claim = (debateAddress: `0x${string}`) => {
@@ -119,7 +119,7 @@ export function useClaim() {
     });
   };
 
-  return { claim, claimAsync, data, isPending, error, reset };
+  return { claim, claimAsync, data, isPending, isSuccess, error, reset };
 }
 
 // ── Add Bounty ──

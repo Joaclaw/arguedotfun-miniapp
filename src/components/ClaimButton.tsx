@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { useDebateStatus, useUserBets, useHasClaimed } from '@/hooks/useDebate';
 import { useClaim } from '@/hooks/useTransactions';
@@ -14,7 +15,15 @@ export default function ClaimButton({ debateAddress }: ClaimButtonProps) {
   const { data: statusRaw } = useDebateStatus(debateAddress);
   const { data: bets } = useUserBets(debateAddress, address);
   const { data: claimed } = useHasClaimed(debateAddress, address);
-  const { claim, isPending, error } = useClaim();
+  const { claim, isPending, isSuccess, error } = useClaim();
+
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setShowSuccess(true);
+    }
+  }, [isSuccess]);
 
   if (!address) return null;
 
@@ -28,11 +37,11 @@ export default function ClaimButton({ debateAddress }: ClaimButtonProps) {
   const userSideB = bets ? (bets as readonly bigint[])[1] : 0n;
   if (userSideA === 0n && userSideB === 0n) return null;
 
-  // Already claimed
-  if (claimed) {
+  // Already claimed (from chain or just succeeded)
+  if (claimed || showSuccess) {
     return (
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-center text-sm text-zinc-500">
-        ✅ Already claimed
+      <div className="rounded-xl border border-emerald-800/50 bg-emerald-950/20 p-4 text-center text-sm font-medium text-emerald-400">
+        {showSuccess && !claimed ? '🎉 Claimed!' : '✅ Already claimed'}
       </div>
     );
   }
@@ -50,11 +59,23 @@ export default function ClaimButton({ debateAddress }: ClaimButtonProps) {
             : 'bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700'
         }`}
       >
-        {isPending ? 'Claiming…' : isRefund ? 'Claim Refund' : 'Claim Winnings'}
+        {isPending ? (
+          <span className="inline-flex items-center gap-2">
+            <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            Claiming…
+          </span>
+        ) : isRefund ? (
+          'Claim Refund'
+        ) : (
+          'Claim Winnings'
+        )}
       </button>
       {error && (
         <p className="text-center text-xs text-red-400">
-          {error.message?.slice(0, 100) ?? 'Claim failed'}
+          {error.message?.slice(0, 120) ?? 'Claim failed'}
         </p>
       )}
     </div>
