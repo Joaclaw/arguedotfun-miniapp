@@ -38,6 +38,9 @@ export const metadata: Metadata = {
     description: 'Debate prediction markets on Base',
     images: ['/og.png'],
   },
+  other: {
+    'base:app_id': '6984615f7a0334031d1344f8',
+  },
 };
 
 export default function RootLayout({
